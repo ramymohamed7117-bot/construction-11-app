@@ -1,0 +1,10 @@
+.license-status{padding:7px 12px;border-radius:20px;background:#dcfce7;color:#166534;font-size:.82rem;font-weight:700}
+.license-status.expired{background:#fee2e2;color:#991b1b}
+.license-overlay{display:none;position:fixed;inset:0;background:#0009;z-index:120;align-items:center;justify-content:center;padding:16px}
+.license-overlay.show{display:flex}
+.license-card{position:relative;background:var(--card,#fff);color:var(--tx,#222);border:1px solid var(--bd,#ddd);border-radius:16px;padding:24px;width:min(100%,520px);max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0005}
+.license-card h2{margin-top:0}.license-card label{display:block;margin:14px 0 6px}.license-card input{width:100%;padding:10px;border:1px solid var(--bd,#ddd);border-radius:8px;background:var(--bg,#fff);color:var(--tx,#222)}
+.license-close{position:absolute;left:14px;top:12px;background:transparent;color:var(--tx,#222);font-size:24px;padding:2px 8px}
+.license-state{padding:10px;background:var(--bg,#f3f4f6);border-radius:8px;font-weight:700}
+.license-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.license-actions button{flex:1;min-width:130px}.license-actions .secondary{background:transparent;color:var(--tx,#222);border:1px solid var(--bd,#ddd)}
+.license-note{font-size:.82rem;color:var(--mu,#666)}

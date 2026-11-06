@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#243b65"><meta name="description" content="نظام إدارة المشاريع الإنشائية والمقاولات">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>نظام إدارة المشاريع الإنشائية - النسخة النهائية</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif}
+:root{--primary:#667eea;--primary2:#764ba2;--success:#16a34a;--danger:#dc2626;--warning:#d97706;--info:#0284c7;--bg:#f3f5f9;--text:#1f2937;--muted:#6b7280;--border:#e5e7eb}
+body{background:var(--bg);color:var(--text);line-height:1.6}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--primary2));padding:20px}
+.login-box{background:#fff;width:min(420px,100%);padding:35px;border-radius:22px;box-shadow:0 25px 70px #0004;text-align:center}
+.logo{width:72px;height:72px;border-radius:20px;margin:0 auto 15px;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;display:grid;place-items:center;font-size:34px;font-weight:800}
+.login-box h1{color:var(--primary);font-size:25px;margin-bottom:5px}.subtitle{color:var(--muted);font-size:14px;margin-bottom:25px}
+.field{margin-bottom:15px;text-align:right}.field label{display:block;font-size:13px;font-weight:700;color:#4b5563;margin-bottom:6px}
+.field input,.field select,.field textarea,.search input{width:100%;border:1px solid var(--border);border-radius:10px;padding:11px 13px;background:#fff;outline:none;transition:.2s}
+.field input:focus,.field select:focus,.field textarea:focus,.search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px #667eea18}
+.field textarea{min-height:90px;resize:vertical}
+.login-btn{width:100%;border:0;border-radius:11px;padding:13px;background:var(--primary);color:#fff;font-weight:700;font-size:16px;margin-top:5px}
+.hint{background:#f8fafc;border-radius:10px;padding:10px;margin-top:15px;color:var(--muted);font-size:12px}
+.app{display:none;min-height:100vh}.app.active{display:block}
+.sidebar{position:fixed;right:0;top:0;width:260px;height:100vh;background:#fff;border-left:1px solid var(--border);z-index:100;overflow:auto}
+.sidebar-header{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;padding:24px;text-align:center}
+.sidebar-header h2{font-size:19px}.sidebar-header p{font-size:12px;opacity:.9}
+.nav{padding:12px 0}.nav-item{padding:13px 20px;display:flex;align-items:center;gap:10px;color:#4b5563;border-right:3px solid transparent;transition:.2s}
+.nav-item:hover,.nav-item.active{background:#f5f6ff;color:var(--primary);border-right-color:var(--primary)}
+.main{margin-right:260px;padding:20px}
+.topbar{background:#fff;border:1px solid var(--border);border-radius:16px;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px;box-shadow:0 2px 10px #00000008}
+.topbar h2{font-size:20px}.userbox{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.menu-btn{display:none;border:0;background:#fff;font-size:24px}
+.page{display:none}.page.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:center;gap:14px}
+.stat-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:24px}.blue{background:#e8efff}.green{background:#e9f8ef}.orange{background:#fff2df}.red{background:#ffebeb}
+.stat h3{font-size:25px}.stat p{font-size:12px;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}.card-head h3{font-size:17px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}.btn{border:0;border-radius:9px;padding:9px 14px;font-weight:700;font-size:13px;transition:.2s}.btn:hover{transform:translateY(-1px);filter:brightness(.98)}
+.primary{background:var(--primary);color:#fff}.success{background:var(--success);color:#fff}.danger{background:var(--danger);color:#fff}.warning{background:#f59e0b;color:#111}.secondary{background:#eef2f7;color:#374151}.info{background:var(--info);color:#fff}
+.search{margin-bottom:15px}.search input{padding:12px 14px}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:700px}th,td{padding:11px 10px;text-align:right;border-bottom:1px solid var(--border);font-size:13px}th{background:#f8fafc;color:#6b7280;font-weight:800}tr:hover td{background:#fafbff}
+.badge{display:inline-block;border-radius:20px;padding:4px 9px;font-size:11px;font-weight:800}.b-success{background:#dcfce7;color:#166534}.b-warning{background:#fef3c7;color:#92400e}.b-danger{background:#fee2e2;color:#991b1b}.b-info{background:#dbeafe;color:#1e40af}.b-gray{background:#f3f4f6;color:#4b5563}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.project-card,.activity{border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:10px}.project-card h4{margin-bottom:5px}.muted{color:var(--muted);font-size:12px}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:15px;z-index:2000}.modal.active{display:flex}.modal-box{background:#fff;width:min(700px,100%);max-height:92vh;overflow:auto;border-radius:18px}
+.modal-head{padding:17px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.modal-head button{border:0;background:none;font-size:24px;color:#777}.modal-body{padding:20px}.modal-foot{padding:15px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-start;gap:8px}
+.toast{position:fixed;left:20px;bottom:20px;background:#111827;color:#fff;padding:12px 18px;border-radius:10px;z-index:5000;opacity:0;transform:translateY(20px);transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}.toast.error{background:#b91c1c}.toast.success{background:#166534}
+.empty{text-align:center;color:#9ca3af;padding:35px}.danger-text{color:var(--danger);font-weight:700}.money{font-weight:800}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr}.sidebar{transform:translateX(100%);transition:.25s}.sidebar.open{transform:translateX(0)}.main{margin-right:0}.menu-btn{display:block}.topbar{position:sticky;top:0;z-index:50}}
+@media(max-width:600px){.stats,.grid2{grid-template-columns:1fr}.main{padding:10px}.topbar{padding:12px}.topbar h2{font-size:17px}.userbox span{display:none}}
+
+.logo-preview{min-height:150px;border:2px dashed var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;background:#fafafa;overflow:hidden;color:var(--muted)}
+.logo-preview img{max-width:100%;max-height:150px;object-fit:contain}.attachment-list{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.attachment-item{border:1px solid var(--border);border-radius:10px;padding:8px;background:#fafafa;display:flex;align-items:center;gap:7px;max-width:100%}.attachment-item a{color:var(--primary);font-weight:600;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}.project-logo{width:58px;height:58px;border-radius:12px;object-fit:cover;border:1px solid var(--border);background:#fff}.progress-wrap{margin-top:10px}.progress-track{height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden}.progress-fill{height:100%;background:var(--primary);border-radius:99px}.project-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}.project-meta span{font-size:12px;background:#f3f4f6;border-radius:8px;padding:3px 7px}.settings-logo-small{max-width:48px;max-height:48px;vertical-align:middle;border-radius:8px}
+
+@media(max-width:900px){body{padding-bottom:env(safe-area-inset-bottom)}.main{padding-bottom:calc(18px + env(safe-area-inset-bottom))}.modal{padding:8px}.modal-box{max-height:96dvh}}
+.install-hint{padding:10px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;color:#1e40af;font-size:13px;margin:10px 0}
+.sync-status{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:20px;background:#f1f5f9;font-size:12px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<section id="loginScreen" class="login">
+  <div class="login-box">
+    <div class="logo">🏗️</div>
+    <h1>نظام إدارة المشاريع الإنشائية</h1>
+    <p class="subtitle">النسخة المحلية النهائية</p>
+    <form id="loginForm">
+      <div class="field"><label>اسم المستخدم</label><input id="loginUsername" autocomplete="username" required></div>
+      <div class="field"><label>كلمة المرور</label><input id="loginPassword" type="password" autocomplete="current-password" required></div>
+      <button class="login-btn" type="submit">دخول إلى النظام</button>
+    </form>
+    <div class="hint">الحساب الافتراضي: <strong>admin</strong> / <strong>admin</strong></div>
+  </div>
+</section>
+
+<section id="app" class="app">
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header"><div id="sidebarLogo">🏗️</div><h2 id="sidebarCompanyName">إدارة الإنشاءات</h2><p id="sidebarCompanySubtitle">نظام محلي لإدارة المشاريع</p></div>
+    <nav class="nav">
+      <div class="nav-item active" data-page="dashboard">🏠 <span>الرئيسية</span></div>
+      <div class="nav-item" data-page="clients">👥 <span>العملاء</span></div>
+      <div class="nav-item" data-page="projects">🏗️ <span>المشاريع</span></div>
+      <div class="nav-item" data-page="maintenance">🔧 <span>الصيانة</span></div>
+      <div class="nav-item" data-page="finance">💰 <span>السجلات المالية</span></div>
+      <div class="nav-item" data-page="suppliers">🚚 <span>الموردون والمقاولون</span></div>
+      <div class="nav-item" data-page="materials">📦 <span>المواد والمشتريات</span></div>
+      <div class="nav-item" data-page="tasks">📋 <span>المراحل والمهام</span></div>
+      <div class="nav-item" data-page="reports">📊 <span>التقارير والنسخ الاحتياطي</span></div>
+      <div class="nav-item admin-only" data-page="users">👤 <span>المستخدمون</span></div>
+      <div class="nav-item" data-page="settings">⚙️ <span>الإعدادات</span></div>
+      <div class="nav-item" id="logoutBtn">🚪 <span>تسجيل الخروج</span></div>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:10px"><button id="menuBtn" class="menu-btn">☰</button><h2 id="pageTitle">الرئيسية</h2></div>
+      <div class="userbox">المستخدم: <strong id="currentUserName">-</strong><span id="currentRole"></span></div>
+    </header>
+
+    <section id="dashboard" class="page active">
+      <div class="stats">
+        <div class="stat"><div class="stat-icon blue">👥</div><div><h3 id="statClients">0</h3><p>إجمالي العملاء</p></div></div>
+        <div class="stat"><div class="stat-icon green">🏗️</div><div><h3 id="statProjects">0</h3><p>المشاريع النشطة</p></div></div>
+        <div class="stat"><div class="stat-icon orange">💰</div><div><h3 id="statRevenue">0</h3><p>صافي الحركة المالية</p></div></div>
+        <div class="stat"><div class="stat-icon red">🔧</div><div><h3 id="statMaintenance">0</h3><p>طلبات الصيانة المفتوحة</p></div></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><div class="card-head"><h3>آخر المشاريع</h3><button class="btn primary" data-open="projectModal">+ مشروع</button></div><div id="dashboardProjects"></div></div>
+        <div class="card"><div class="card-head"><h3>آخر الحركة المالية</h3><button class="btn success" data-open="financeModal">+ حركة</button></div><div id="dashboardFinance"></div></div>
+      </div>
+    </section>
+
+    <section id="clients" class="page">
+      <div class="card"><div class="card-head"><h3>إدارة العملاء</h3><button class="btn primary" data-open="clientModal">+ إضافة عميل</button></div>
+      <div class="search"><input id="clientSearch" placeholder="بحث بالاسم أو الكود أو الهاتف..." autocomplete="off"></div>
+      <div class="table-wrap"><table><thead><tr><th>الكود</th><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>العنوان</th><th>الإجراءات</th></tr></thead><tbody id="clientsTable"></tbody></table></div></div>
+    </section>
+
+    <section id="projects" class="page">
+      <div class="card"><div class="card-head"><h3>إدارة المشاريع</h3><button class="btn primary" data-open="projectModal">+ إضافة مشروع</button></div>
+      <div class="search"><input id="projectSearch" placeholder="بحث في المشاريع أو العميل أو الكود أو المسؤول..." autocomplete="off"></div>
+      <div class="muted" style="margin-bottom:10px">يمكنك تعديل المشروع، إضافة لوجو، مرفقات، نسبة إنجاز وبيانات إضافية.</div>
+      <div id="projectsList"></div></div>
+    </section>
+
+    <section id="maintenance" class="page">
+      <div class="card"><div class="card-head"><h3>طلبات الصيانة</h3><button class="btn primary" data-open="maintenanceModal">+ طلب صيانة</button></div>
+      <div class="search"><input id="maintenanceSearch" placeholder="بحث في طلبات الصيانة..." autocomplete="off"></div><div id="maintenanceList"></div></div>
+    </section>
+
+    <section id="finance" class="page">
+      <div class="stats">
+        <div class="stat"><div class="stat-icon green">📈</div><div><h3 id="incomeTotal">0</h3><p>إجمالي الإيرادات</p></div></div>
+        <div class="stat"><div class="stat-icon red">📉</div><div><h3 id="expenseTotal">0</h3><p>إجمالي المصروفات</p></div></div>
+        <div class="stat"><div class="stat-icon blue">💵</div><div><h3 id="financeNet">0</h3><p>الصافي</p></div></div>
+        <div class="stat"><div class="stat-icon orange">🧾</div><div><h3 id="financeCount">0</h3><p>عدد السجلات</p></div></div>
+      </div>
+      <div class="card"><div class="card-head"><h3>السجلات المالية</h3><button class="btn success" data-open="financeModal">+ إضافة حركة</button></div><div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>النوع</th><th>المشروع</th><th>الوصف</th><th>المبلغ</th><th>الإجراءات</th></tr></thead><tbody id="financeTable"></tbody></table></div></div>
+    </section>
+
+    <section id="suppliers" class="page">
+      <div class="card"><div class="card-head"><h3>الموردون والمقاولون</h3><button class="btn primary" data-open="supplierModal">+ إضافة جهة</button></div>
+      <div class="search"><input id="supplierSearch" placeholder="بحث..." autocomplete="off"></div><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>النوع</th><th>الهاتف</th><th>التخصص</th><th>ملاحظات</th><th>الإجراءات</th></tr></thead><tbody id="suppliersTable"></tbody></table></div></div>
+    </section>
+
+    <section id="materials" class="page">
+      <div class="card"><div class="card-head"><h3>المواد والمشتريات</h3><button class="btn primary" data-open="materialModal">+ إضافة مادة / شراء</button></div>
+      <div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>المادة</th><th>المشروع</th><th>الكمية</th><th>الوحدة</th><th>التكلفة</th><th>المورد</th><th>الإجراءات</th></tr></thead><tbody id="materialsTable"></tbody></table></div></div>
+    </section>
+
+    <section id="tasks" class="page">
+      <div class="card"><div class="card-head"><h3>المراحل والمهام</h3><button class="btn primary" data-open="taskModal">+ إضافة مهمة</button></div>
+      <div class="search"><input id="taskSearch" placeholder="بحث..." autocomplete="off"></div><div id="tasksList"></div></div>
+    </section>
+
+    <section id="reports" class="page">
+      <div class="grid2">
+        <div class="card"><div class="card-head"><h3>التقارير</h3></div>
+          <div class="actions"><button class="btn info" id="exportClients">تصدير العملاء CSV</button><button class="btn info" id="exportProjects">تصدير المشاريع CSV</button><button class="btn info" id="exportFinance">تصدير المالية CSV</button><button class="btn info" id="exportAll">تصدير نسخة كاملة JSON</button></div>
+        </div>
+        <div class="card"><div class="card-head"><h3>النسخ الاحتياطي والاستعادة</h3></div>
+          <p class="muted" style="margin-bottom:12px">النسخة الاحتياطية تحفظ جميع بيانات النظام في ملف JSON محلي.</p>
+          <div class="actions"><button class="btn success" id="backupBtn">إنشاء نسخة احتياطية</button><label class="btn warning" for="restoreInput">استعادة نسخة</label><input id="restoreInput" type="file" accept=".json,application/json" class="hidden"></div>
+        </div>
+      </div>
+      <div class="card"><h3 style="margin-bottom:10px">حالة التخزين</h3><p class="muted">التخزين: <strong>محلي على هذا الجهاز فقط</strong>. لا يتم إرسال البيانات إلى الإنترنت.</p></div>
+    </section>
+
+    <section id="settings" class="page">
+      <div class="grid2">
+        <div class="card">
+          <div class="card-head"><h3>بيانات الشركة والواجهة</h3></div>
+          <form id="settingsForm">
+            <div class="field"><label>اسم الشركة / اسم النظام</label><input id="setCompanyName"></div>
+            <div class="field"><label>الوصف المختصر</label><input id="setCompanySubtitle"></div>
+            <div class="grid2">
+              <div class="field"><label>الهاتف</label><input id="setCompanyPhone"></div>
+              <div class="field"><label>البريد الإلكتروني</label><input id="setCompanyEmail" type="email"></div>
+            </div>
+            <div class="field"><label>العنوان</label><input id="setCompanyAddress"></div>
+            <div class="grid2">
+              <div class="field"><label>نوع الخط</label><select id="setFontFamily"><option>Segoe UI</option><option>Tahoma</option><option>Arial</option><option>Verdana</option><option>Trebuchet MS</option></select></div>
+              <div class="field"><label>حجم الخط</label><input id="setFontSize" type="number" min="12" max="24" step="1"></div>
+            </div>
+            <div class="field"><label>لون الواجهة الرئيسي</label><input id="setPrimaryColor" type="color" style="height:46px;padding:4px"></div>
+            <div class="actions"><button class="btn primary" type="submit">حفظ إعدادات الواجهة</button><button class="btn secondary" type="button" id="resetSettingsBtn">إعادة الإعدادات الافتراضية</button></div>
+          </form>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>شعار الشركة</h3></div>
+          <div id="settingsLogoPreview" class="logo-preview">لا يوجد شعار</div>
+          <div class="field"><label>رفع شعار الشركة</label><input id="settingsLogo" type="file" accept="image/*"></div>
+          <div class="actions"><button class="btn info" type="button" id="removeSettingsLogo">إزالة الشعار</button></div>
+          <hr style="margin:18px 0;border:0;border-top:1px solid var(--border)">
+          <h3 style="margin-bottom:8px">الحساب الحالي</h3>
+          <p class="muted" style="margin-bottom:10px">يمكنك تغيير اسم المستخدم وكلمة المرور الخاصة بالحساب الذي سجل الدخول.</p>
+          <form id="accountForm">
+            <div class="field"><label>الاسم الظاهر</label><input id="accName" required></div>
+            <div class="field"><label>اسم المستخدم الجديد</label><input id="accUsername" required autocomplete="username"></div>
+            <div class="field"><label>كلمة المرور الجديدة</label><input id="accPassword" type="password" placeholder="اتركها كما هي إذا لم ترد تغييرها"></div>
+            <div class="actions"><button class="btn success" type="submit">حفظ بيانات الحساب</button></div>
+          </form>
+        </div>
+      </div>
+      <div class="card" id="cloudSyncCard">
+        <div class="card-head"><h3>☁️ المزامنة بين الكمبيوتر والهاتف</h3><span id="cloudSyncStatus" class="sync-status">غير متصل بالسحابة</span></div>
+        <p class="muted" style="margin-bottom:12px">اربط حساب Supabase واحدًا على الكمبيوتر والهاتف لمزامنة البيانات والمرفقات. أدخل بيانات مشروعك مرة واحدة على كل جهاز.</p>
+        <div class="grid2">
+          <div class="field"><label>رابط مشروع Supabase</label><input id="cloudUrl" type="url" placeholder="https://xxxx.supabase.co"></div>
+          <div class="field"><label>مفتاح anon / publishable</label><input id="cloudAnonKey" type="password" placeholder="المفتاح العام للمشروع"></div>
+          <div class="field"><label>بريد حساب المزامنة</label><input id="cloudEmail" type="email" autocomplete="email"></div>
+          <div class="field"><label>كلمة مرور حساب المزامنة</label><input id="cloudPassword" type="password" autocomplete="current-password"></div>
+        </div>
+        <div class="actions"><button class="btn primary" type="button" id="cloudConnectBtn">حفظ والاتصال / إنشاء الحساب</button><button class="btn secondary" type="button" id="cloudSyncNowBtn">مزامنة الآن</button><button class="btn danger" type="button" id="cloudDisconnectBtn">فصل الحساب</button></div>
+        <p class="muted" style="margin-top:10px">تنبيه: لا تضع Service Role Key هنا. استخدم anon/public key فقط. لا تشارك كلمة مرور حساب المزامنة.</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>إدارة المرفقات والملفات</h3></div>
+        <p class="muted">المرفقات تحفظ محليًا على هذا الجهاز. يمكنك إرفاق صور وPDF وWord وExcel وملفات أخرى بالسجلات.</p>
+        <div class="actions" style="margin-top:10px"><span class="badge b-info">الملفات: <b id="attachmentCount">0</b></span><span class="badge b-warning">حد الملف الواحد: 10 MB</span></div>
+      </div>
+    </section>
+
+    <section id="users" class="page admin-only">
+      <div class="card"><div class="card-head"><h3>المستخدمون والصلاحيات</h3><button class="btn primary" data-open="userModal">+ إضافة مستخدم</button></div><div id="usersList"></div></div>
+    </section>
+  </main>
+</section>
+
+<!-- Modals -->
+<div id="clientModal" class="modal"><div class="modal-box"><div class="modal-head"><h3 id="clientModalTitle">إضافة عميل</h3><button data-close>×</button></div><form id="clientForm"><div class="modal-body">
+<input type="hidden" id="clientId"><div class="grid2"><div class="field"><label>كود العميل *</label><input id="cCode" required></div><div class="field"><label>اسم العميل *</label><input id="cName" required></div><div class="field"><label>الهاتف</label><input id="cPhone"></div><div class="field"><label>البريد الإلكتروني</label><input id="cEmail" type="email"></div></div><div class="field"><label>العنوان</label><input id="cAddress"></div><div class="field"><label>مرفقات العميل</label><input id="cAttachments" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"></div><div id="clientExistingAttachments" class="attachment-list"></div><div class="field"><label>ملاحظات</label><textarea id="cNotes"></textarea></div>
+</div><div class="modal-foot"><button class="btn primary" type="submit">حفظ</button><button class="btn secondary" type="button" data-close>إلغاء</button></div></form></div></div>
+
+<div id="projectModal" class="modal"><div class="modal-box"><div class="modal-head"><h3 id="projectModalTitle">إضافة مشروع</h3><button data-close>×</button></div><form id="projectForm"><div class="modal-body">
+<input type="hidden" id="projectId">
+<div class="grid2">
+<div class="field"><label>العميل *</label><select id="pClient" required></select></div>
+<div class="field"><label>كود المشروع</label><input id="pCode" placeholder="PR-001"></div>
+<div class="field"><label>اسم المشروع *</label><input id="pDesc" required></div>
+<div class="field"><label>نوع المشروع</label><select id="pType"><option value="construction">إنشاءات</option><option value="installation">تركيبات</option><option value="renovation">تجديد</option><option value="maintenance">صيانة</option><option value="other">أخرى</option></select></div>
+<div class="field"><label>التكلفة المتوقعة</label><input id="pCost" type="number" min="0" step="0.01"></div>
+<div class="field"><label>قيمة العقد</label><input id="pContractValue" type="number" min="0" step="0.01"></div>
+<div class="field"><label>تاريخ البداية</label><input id="pStart" type="date"></div>
+<div class="field"><label>تاريخ النهاية</label><input id="pEnd" type="date"></div>
+<div class="field"><label>الحالة</label><select id="pStatus"><option value="pending">مخطط</option><option value="active">قيد التنفيذ</option><option value="completed">مكتمل</option><option value="cancelled">ملغي</option></select></div>
+<div class="field"><label>نسبة الإنجاز %</label><input id="pProgress" type="number" min="0" max="100" step="1" value="0"></div>
+<div class="field"><label>مدير المشروع</label><input id="pManager"></div>
+<div class="field"><label>المهندس المسؤول</label><input id="pEngineer"></div>
+</div>
+<div class="field"><label>عنوان / موقع المشروع</label><input id="pLocation"></div>
+<div class="grid2"><div class="field"><label>اسم الحقل الإضافي</label><input id="pCustomLabel" placeholder="مثال: رقم الرخصة"></div><div class="field"><label>قيمة الحقل الإضافي</label><input id="pCustomValue"></div></div>
+<div class="field"><label>لوجو / صورة المشروع</label><input id="pLogo" type="file" accept="image/*"></div>
+<div class="field"><label>مرفقات المشروع</label><input id="pAttachments" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"></div>
+<div id="projectExistingAttachments" class="attachment-list"></div>
+<div class="field"><label>ملاحظات</label><textarea id="pNotes"></textarea></div>
+</div><div class="modal-foot"><button class="btn primary" type="submit">حفظ المشروع</button><button class="btn secondary" type="button" data-close>إلغاء</button></div></form></div></div>
+
+<div id="maintenanceModal" class="modal"><div class="modal-box"><div class="modal-head"><h3>تسجيل طلب صيانة</h3><button data-close>×</button></div><form id="maintenanceForm"><div class="modal-body">
+<div class="grid2"><div class="field"><label>العميل *</label><select id="mClient" required></select></div><div class="field"><label>التاريخ *</label><input id="mDate" type="date" required></div><div class="field"><label>الأولوية</label><select id="mPriority"><option value="low">منخفضة</option><option value="medium" selected>متوسطة</option><option value="high">عالية</option><option value="urgent">عاجلة</option></select></div><div class="field"><label>الفني / المسؤول</label><input id="mAssignee"></div></div><div class="field"><label>وصف المشكلة *</label><textarea id="mDesc" required></textarea></div><div class="field"><label>مرفقات الصيانة</label><input id="mAttachments" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"></div><div id="maintenanceExistingAttachments" class="attachment-list"></div>
+</div><div class="modal-foot"><button class="btn primary" type="submit">حفظ</button><button class="btn secondary" type="button" data-close>إلغاء</button></div></form></div></div>
+
+<div id="financeModal" class="modal"><div class="modal-box"><div class="modal-head"><h3>إضافة حركة مالية</h3><button data-close>×</button></div><form id="financeForm"><div class="modal-body">
+<div class="grid2"><div class="field"><label>النوع</label><select id="fType"><option value="income">إيراد</option><option value="expense">مصروف</option></select></div><div class="field"><label>المبلغ *</label><input id="fAmount" type="number" min="0" step="0.01" required></div><div class="field"><label>التاريخ *</label><input id="fDate" type="date" required></div><div class="field"><label>المشروع</label><select id="fProject"></select></div></div><div class="field"><label>الوصف</label><textarea id="fDesc"></textarea></div><div class="field"><label>مرفقات الحركة المالية</label><input id="fAttachments" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"></div><div id="financeExistingAttachments" class="attachment-list"></div>
+</div><div class="modal-foot"><button class="btn primary" type="submit">حفظ</button><button class="btn secondary" type="button" data-close>إلغاء</button></div></form></div></div>
+
+<div id="supplierModal" class="modal"><div class="modal-box"><div class="modal-head"><h3>إضافة مورد / مقاول</h3><button data-close>×</button></div><form id="supplierForm"><div class="modal-body">
+<div class="grid2"><div class="field"><label>الاسم *</label><input id="sName" required></div><div class="field"><label>النوع</label><select id="sType"><option>مورد</option><option>مقاول</option><option>مقاول باطن</option><option>جهة أخرى</option></select></div><div class="field"><label>الهاتف</label><input id="sPhone"></div><div class="field"><label>التخصص</label><input id="sSpecialty"></div></div><div class="field"><label>مرفقات المورد / المقاول</label><input id="sAttachments" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"></div><div id="supplierExistingAttachments" class="attachment-list"></div><div class="field"><label>ملاحظات</label><textarea id="sNotes"></textarea></div>
+</div><div class="modal-foot"><button class="btn primary" type="submit">حفظ</button><button class="btn secondary" type="button" data-close>إلغاء</button></div></form></div></div>
+
+<div id="materialModal" class="modal"><div class="modal-box"><div class="modal-head"><h3>إضافة مادة / شراء</h3><button data-close>×</button></div><form id="materialForm"><div class="modal-body">
+<div class="grid2"><div class="field"><label>المادة *</label><input id="matName" required></div><div class="field"><label>التاريخ *</label><input id="matDate" type="date" required></div><div class="field"><label>المشروع</label><select id="matProject"></select></div><div class="field"><label>المورد</label><select id="matSupplier"></select></div><div class="field"><label>الكمية</label><input id="matQty" type="number" min="0" step="0.01"></div><div class="field"><label>الوحدة</label><input id="matUnit" placeholder="طن / م3 / قطعة..."></div><div class="field"><label>التكلفة</label><input id="matCost" type="number" min="0" step="0.01"></div></div><div class="field"><label>مرفقات المادة / الشراء</label><input id="matAttachments" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"></div><div id="materialExistingAttachments" class="attachment-list"></div>
+</div><div class="modal-foot"><button class="btn primary" type="submit">حفظ</button><button class="btn secondary" type="button" data-close>إلغاء</button></div></form></div></div>
+
+<div id="taskModal" class="modal"><div class="modal-box"><div class="modal-head"><h3>إضافة مرحلة / مهمة</h3><button data-close>×</button></div><form id="taskForm"><div class="modal-body">
+<div class="grid2"><div class="field"><label>المشروع *</label><select id="tProject" required></select></div><div class="field"><label>اسم المهمة *</label><input id="tName" required></div><div class="field"><label>المرحلة</label><input id="tPhase" placeholder="الحفر، الخرسانة، التشطيبات..."></div><div class="field"><label>المسؤول</label><input id="tAssignee"></div><div class="field"><label>تاريخ البداية</label><input id="tStart" type="date"></div><div class="field"><label>تاريخ النهاية</label><input id="tEnd" type="date"></div><div class="field"><label>الحالة</label><select id="tStatus"><option value="pending">لم تبدأ</option><option value="active">جارية</option><option value="completed">مكتملة</option></select></div></div><div class="field"><label>مرفقات المهمة</label><input id="tAttachments" type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"></div><div id="taskExistingAttachments" class="attachment-list"></div>
+</div><div class="modal-foot"><button class="btn primary" type="submit">حفظ</button><button class="btn secondary" type="button" data-close>إلغاء</button></div></form></div></div>
+
+<div id="userModal" class="modal"><div class="modal-box"><div class="modal-head"><h3>إضافة مستخدم</h3><button data-close>×</button></div><form id="userForm"><div class="modal-body">
+<div class="grid2"><div class="field"><label>الاسم *</label><input id="uName" required></div><div class="field"><label>اسم المستخدم *</label><input id="uUsername" required></div><div class="field"><label>كلمة المرور *</label><input id="uPassword" type="password" required></div><div class="field"><label>الصلاحية</label><select id="uRole"><option value="user">مستخدم</option><option value="admin">مدير</option></select></div></div>
+</div><div class="modal-foot"><button class="btn primary" type="submit">حفظ</button><button class="btn secondary" type="button" data-close>إلغاء</button></div></form></div></div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+
+const STORAGE_KEY="construction_management_final_v2";
+const FILE_DB_NAME="construction_management_files_v2";
+const FILE_STORE_NAME="files";
+const defaultData={
+  users:[{id:1,name:"المدير",username:"admin",password:"admin",role:"admin"}],
+  clients:[],projects:[],maintenance:[],finance:[],suppliers:[],materials:[],tasks:[],
+  settings:{companyName:"نظام إدارة المشاريع الإنشائية",companySubtitle:"النظام المحلي لإدارة المقاولات والإنشاءات",companyPhone:"",companyEmail:"",companyAddress:"",logoFileId:null,fontFamily:"Segoe UI",fontSize:16,primaryColor:"#667eea"},
+  attachments:[]
+};
+let db=loadDB();
+let currentUser=null;
+let currentAttachmentOwner=null;
+function openFileDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(FILE_DB_NAME,1);
+    req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(FILE_STORE_NAME))req.result.createObjectStore(FILE_STORE_NAME,{keyPath:"id"})};
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });
+}
+async function putFile(file){
+  if(!file)return null;
+  if(file.size>10*1024*1024){toast("حجم الملف يتجاوز 10 MB","error");return null}
+  const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});
+  const obj={id:"file_"+id()+"_"+Math.random().toString(36).slice(2),name:file.name,type:file.type||"application/octet-stream",size:file.size,data};
+  const dbf=await openFileDB();await new Promise((resolve,reject)=>{const tx=dbf.transaction(FILE_STORE_NAME,"readwrite");tx.objectStore(FILE_STORE_NAME).put(obj);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
+  dbf.close();return {id:obj.id,name:obj.name,type:obj.type,size:obj.size};
+}
+async function getFile(fileId){
+  const dbf=await openFileDB();const out=await new Promise((resolve,reject)=>{const tx=dbf.transaction(FILE_STORE_NAME,"readonly");const r=tx.objectStore(FILE_STORE_NAME).get(fileId);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});dbf.close();return out;
+}
+async function deleteStoredFile(fileId){
+  if(!fileId)return;const dbf=await openFileDB();await new Promise((resolve,reject)=>{const tx=dbf.transaction(FILE_STORE_NAME,"readwrite");tx.objectStore(FILE_STORE_NAME).delete(fileId);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});dbf.close();
+}
+async function saveAttachments(ownerType,ownerId,inputId){
+  const input=document.getElementById(inputId);if(!input?.files?.length)return [];
+  const result=[];
+  for(const file of Array.from(input.files)){const meta=await putFile(file);if(meta){meta.ownerType=ownerType;meta.ownerId=ownerId;db.attachments.push(meta);result.push(meta)}}
+  if(result.length)saveDB();return result;
+}
+function ownerAttachments(ownerType,ownerId){return db.attachments.filter(a=>a.ownerType===ownerType&&String(a.ownerId)===String(ownerId))}
+async function renderAttachmentList(elId,ownerType,ownerId){
+  const el=document.getElementById(elId);if(!el)return;
+  const arr=ownerAttachments(ownerType,ownerId);
+  if(!arr.length){el.innerHTML="";return}
+  el.innerHTML=arr.map(a=>`<div class="attachment-item"><span>📎</span><a href="#" onclick="openAttachment('${a.id}');return false">${esc(a.name)}</a><button type="button" class="btn danger" style="padding:3px 7px" onclick="removeAttachment('${a.id}')">×</button></div>`).join("");
+}
+async function openAttachment(fileId){
+  const f=await getFile(fileId);if(!f)return toast("تعذر فتح الملف","error");
+  const w=window.open();if(!w)return toast("يرجى السماح بالنوافذ المنبثقة","error");
+  if(f.type.startsWith("image/")||f.type==="application/pdf"){w.document.write(`<title>${esc(f.name)}</title><iframe src="${f.data}" style="width:100%;height:100vh;border:0"></iframe>`)}
+  else{const a=w.document.createElement("a");a.href=f.data;a.download=f.name;a.textContent="اضغط لتحميل الملف";w.document.body.appendChild(a);a.click()}
+}
+async function removeAttachment(fileId){
+  if(!confirm("حذف هذا المرفق؟"))return;
+  await deleteStoredFile(fileId);db.attachments=db.attachments.filter(a=>a.id!==fileId);saveDB();renderAll();toast("تم حذف المرفق");
+}
+function applySettings(){
+  const st=db.settings||{};
+  document.documentElement.style.setProperty("--primary",st.primaryColor||"#667eea");
+  document.body.style.fontFamily=st.fontFamily||"Segoe UI";
+  document.body.style.fontSize=(Number(st.fontSize)||16)+"px";
+  document.title=st.companyName||"نظام إدارة المشاريع الإنشائية";
+  const cn=document.getElementById("sidebarCompanyName");if(cn)cn.textContent=st.companyName||"إدارة الإنشاءات";
+  const cs=document.getElementById("sidebarCompanySubtitle");if(cs)cs.textContent=st.companySubtitle||"النظام المحلي لإدارة المقاولات والإنشاءات";
+  const logo=st.logoFileId;
+  const preview=document.getElementById("settingsLogoPreview");
+  if(preview){
+    if(logo){getFile(logo).then(f=>{preview.innerHTML=f?`<img src="${f.data}" alt="logo">`:"لا يوجد شعار"})}
+    else preview.textContent="لا يوجد شعار";
+  }
+}
+async function renderSettings(){
+  const st=db.settings||{};
+  ["CompanyName","CompanySubtitle","CompanyPhone","CompanyEmail","CompanyAddress","FontFamily","FontSize","PrimaryColor"].forEach(k=>{
+    const e=document.getElementById("set"+k);if(e)e.value=st[k.charAt(0).toLowerCase()+k.slice(1)]??"";
+  });
+  const accName=document.getElementById("accName");if(accName&&currentUser){accName.value=currentUser.name||"";document.getElementById("accUsername").value=currentUser.username||""}
+  const count=document.getElementById("attachmentCount");if(count)count.textContent=db.attachments.length;
+  applySettings();
+}
+
+
+function clone(v){return JSON.parse(JSON.stringify(v));}
+function loadDB(){
+  try{
+    let raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      const oldRaw=localStorage.getItem("construction_management_final_v1");
+      if(oldRaw){
+        raw=oldRaw;
+        try{const oldParsed=JSON.parse(oldRaw);oldParsed.settings={...clone(defaultData.settings),...(oldParsed.settings||{})};oldParsed.attachments=Array.isArray(oldParsed.attachments)?oldParsed.attachments:[];localStorage.setItem(STORAGE_KEY,JSON.stringify(oldParsed));}catch(e){}
+      }
+    }
+    if(!raw)return clone(defaultData);
+    const parsed=JSON.parse(raw);
+    const merged={...clone(defaultData),...parsed};
+    merged.settings={...clone(defaultData.settings),...(parsed.settings||{})};
+    merged.attachments=Array.isArray(parsed.attachments)?parsed.attachments:[];
+    return merged;
+  }catch(e){console.error(e);return clone(defaultData);}
+}
+function saveDB(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+  scheduleCloudSync();
+}
+function id(){return Date.now()+Math.floor(Math.random()*1000);}
+function today(){return new Date().toISOString().slice(0,10);}
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
+}
+function money(v){return Number(v||0).toLocaleString("ar-EG",{maximumFractionDigits:2})+" ج.م";}
+function toast(msg,type="success"){
+  const el=document.getElementById("toast");el.textContent=msg;el.className="toast show "+type;
+  clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.className="toast",2500);
+}
+function openModal(id){
+  const m=document.getElementById(id);if(!m)return;
+  m.classList.add("active");
+  m.querySelectorAll('input[type="date"]').forEach(x=>{if(!x.value)x.value=today();});
+  updateSelects();
+}
+function closeModal(id){const m=document.getElementById(id);if(m)m.classList.remove("active");}
+function resetForm(formId){const f=document.getElementById(formId);if(f)f.reset();}
+
+const pageTitles={dashboard:"الرئيسية",clients:"العملاء",projects:"المشاريع",maintenance:"الصيانة",finance:"السجلات المالية",suppliers:"الموردون والمقاولون",materials:"المواد والمشتريات",tasks:"المراحل والمهام",reports:"التقارير والنسخ الاحتياطي",users:"المستخدمون",settings:"الإعدادات"};
+function showPage(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const target=document.getElementById(page);if(!target)return;
+  target.classList.add("active");
+  document.querySelectorAll(".nav-item[data-page]").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+  document.getElementById("pageTitle").textContent=pageTitles[page]||"الرئيسية";
+  document.getElementById("sidebar").classList.remove("open");
+  renderAll();
+}
+function login(user){
+  currentUser=user;
+  sessionStorage.setItem("construction_session",JSON.stringify({id:user.id}));
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("app").classList.add("active");
+  document.getElementById("currentUserName").textContent=user.name;
+  document.getElementById("currentRole").textContent=user.role==="admin"?"(مدير)":"(مستخدم)";
+  document.querySelectorAll(".admin-only").forEach(x=>x.style.display=user.role==="admin"?"flex":"none");
+  showPage("dashboard");
+}
+function logout(){
+  currentUser=null;sessionStorage.removeItem("construction_session");
+  document.getElementById("app").classList.remove("active");document.getElementById("loginScreen").style.display="flex";
+  document.getElementById("loginForm").reset();
+}
+function requireAdmin(){
+  if(currentUser?.role!=="admin"){toast("هذه العملية متاحة للمدير فقط","error");return false}
+  return true;
+}
+function updateStats(){
+  const income=db.finance.filter(x=>x.type==="income").reduce((s,x)=>s+Number(x.amount||0),0);
+  const expense=db.finance.filter(x=>x.type==="expense").reduce((s,x)=>s+Number(x.amount||0),0);
+  document.getElementById("statClients").textContent=db.clients.length;
+  document.getElementById("statProjects").textContent=db.projects.filter(x=>!["completed","cancelled"].includes(x.status)).length;
+  document.getElementById("statRevenue").textContent=money(income-expense);
+  document.getElementById("statMaintenance").textContent=db.maintenance.filter(x=>x.status!=="completed").length;
+  document.getElementById("incomeTotal").textContent=money(income);
+  document.getElementById("expenseTotal").textContent=money(expense);
+  document.getElementById("financeNet").textContent=money(income-expense);
+  document.getElementById("financeCount").textContent=db.finance.length;
+}
+function clientName(idv){return db.clients.find(x=>String(x.id)===String(idv))?.name||"غير معروف"}
+function projectName(idv){return db.projects.find(x=>String(x.id)===String(idv))?.desc||"غير محدد"}
+function supplierName(idv){return db.suppliers.find(x=>String(x.id)===String(idv))?.name||"غير محدد"}
+function statusBadge(s){
+  const map={pending:["مخطط","b-warning"],active:["قيد التنفيذ","b-info"],completed:["مكتمل","b-success"],cancelled:["ملغي","b-danger"]};
+  const [t,c]=map[s]||[s||"غير محدد","b-gray"];return `<span class="badge ${c}">${t}</span>`;
+}
+function priorityBadge(s){
+  const map={low:["منخفضة","b-success"],medium:["متوسطة","b-warning"],high:["عالية","b-danger"],urgent:["عاجلة","b-danger"]};
+  const [t,c]=map[s]||["غير محدد","b-gray"];return `<span class="badge ${c}">${t}</span>`;
+}
+function renderAll(){
+  updateStats();updateSelects();renderClients();renderProjects();renderMaintenance();renderFinance();renderSuppliers();renderMaterials();renderTasks();renderUsers();renderDashboard();renderSettings();
+}
+function updateSelects(){
+  const clients=`<option value="">اختر العميل</option>`+db.clients.map(x=>`<option value="${x.id}">${esc(x.name)} (${esc(x.code)})</option>`).join("");
+  ["pClient","mClient"].forEach(idv=>{const e=document.getElementById(idv);if(e){const old=e.value;e.innerHTML=clients;e.value=old}});
+  const projects=`<option value="">-- اختياري --</option>`+db.projects.map(x=>`<option value="${x.id}">${esc(x.desc)}</option>`).join("");
+  ["fProject","matProject","tProject"].forEach(idv=>{const e=document.getElementById(idv);if(e){const old=e.value;e.innerHTML=projects;e.value=old}});
+  const suppliers=`<option value="">-- اختياري --</option>`+db.suppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+  const se=document.getElementById("matSupplier");if(se){const old=se.value;se.innerHTML=suppliers;se.value=old}
+}
+function renderDashboard(){
+  const p=document.getElementById("dashboardProjects");
+  p.innerHTML=db.projects.slice(-5).reverse().map(x=>`<div class="project-card"><h4>${esc(x.desc)}</h4><div class="muted">العميل: ${esc(clientName(x.clientId))} · ${statusBadge(x.status)}</div><div class="money" style="margin-top:6px">${money(x.cost)}</div></div>`).join("")||'<div class="empty">لا توجد مشاريع حتى الآن</div>';
+  const f=document.getElementById("dashboardFinance");
+  f.innerHTML=db.finance.slice(-5).reverse().map(x=>`<div class="activity"><b>${x.type==="income"?"📈 إيراد":"📉 مصروف"}</b> · ${esc(x.desc||"بدون وصف")}<div class="${x.type==="income"?"money":"danger-text"}" style="margin-top:5px">${x.type==="income"?"+":"-"} ${money(x.amount)}</div></div>`).join("")||'<div class="empty">لا توجد حركات مالية</div>';
+}
+function renderClients(){
+  const term=(document.getElementById("clientSearch")?.value||"").toLowerCase();
+  const rows=db.clients.filter(x=>`${x.code} ${x.name} ${x.phone} ${x.email}`.toLowerCase().includes(term));
+  document.getElementById("clientsTable").innerHTML=rows.map(x=>`<tr><td><b>${esc(x.code)}</b></td><td>${esc(x.name)}</td><td>${esc(x.phone||"-")}</td><td>${esc(x.email||"-")}</td><td>${esc(x.address||"-")}</td><td><div class="actions"><button class="btn info" onclick="viewClient(${x.id})">عرض</button><button class="btn warning" onclick="editClient(${x.id})">تعديل</button>${currentUser?.role==="admin"?`<button class="btn danger" onclick="deleteClient(${x.id})">حذف</button>`:""}</div></td></tr>`).join("")||'<tr><td colspan="6" class="empty">لا توجد بيانات</td></tr>';
+}
+async function saveClient(e){
+  e.preventDefault();
+  const obj={id:Number(document.getElementById("clientId").value)||id(),code:document.getElementById("cCode").value.trim(),name:document.getElementById("cName").value.trim(),phone:document.getElementById("cPhone").value.trim(),email:document.getElementById("cEmail").value.trim(),address:document.getElementById("cAddress").value.trim(),notes:document.getElementById("cNotes").value.trim()};
+  if(!obj.code||!obj.name){toast("يرجى إدخال كود واسم العميل","error");return}
+  const duplicate=db.clients.find(x=>x.code===obj.code&&x.id!==obj.id);if(duplicate){toast("كود العميل مستخدم بالفعل","error");return}
+  const i=db.clients.findIndex(x=>x.id===obj.id);if(i>=0)db.clients[i]=obj;else db.clients.push(obj);
+  await saveAttachments("client",obj.id,"cAttachments");saveDB();closeModal("clientModal");resetForm("clientForm");renderAll();toast(i>=0?"تم تعديل العميل":"تم حفظ العميل");
+}
+function editClient(idv){
+  const x=db.clients.find(x=>x.id===idv);if(!x)return;
+  document.getElementById("clientId").value=x.id;document.getElementById("cCode").value=x.code;document.getElementById("cName").value=x.name;document.getElementById("cPhone").value=x.phone||"";document.getElementById("cEmail").value=x.email||"";document.getElementById("cAddress").value=x.address||"";document.getElementById("cNotes").value=x.notes||"";
+  document.getElementById("clientModalTitle").textContent="تعديل العميل";openModal("clientModal");renderAttachmentList("clientExistingAttachments","client",x.id);
+}
+function viewClient(idv){
+  const x=db.clients.find(x=>x.id===idv);if(!x)return;
+  const count=db.projects.filter(p=>String(p.clientId)===String(idv)).length;
+  alert(`العميل: ${x.name}\nالكود: ${x.code}\nالهاتف: ${x.phone||"-"}\nالبريد: ${x.email||"-"}\nالعنوان: ${x.address||"-"}\nعدد المشاريع: ${count}\nالملاحظات: ${x.notes||"-"}`);
+}
+function deleteClient(idv){
+  if(!requireAdmin())return;
+  if(db.projects.some(x=>String(x.clientId)===String(idv))){toast("لا يمكن حذف عميل مرتبط بمشروع","error");return}
+  if(confirm("هل أنت متأكد من حذف العميل؟")){db.clients=db.clients.filter(x=>x.id!==idv);saveDB();renderAll();toast("تم حذف العميل")}
+}
+function renderProjects(){
+  const term=(document.getElementById("projectSearch")?.value||"").toLowerCase();
+  const rows=db.projects.filter(x=>`${x.desc} ${x.code||""} ${clientName(x.clientId)} ${x.type} ${x.manager||""} ${x.engineer||""}`.toLowerCase().includes(term));
+  document.getElementById("projectsList").innerHTML=rows.map(x=>{
+    const pct=Math.max(0,Math.min(100,Number(x.progress)||0));
+    const logo=x.logoFileId?`<div id="projectLogo_${x.id}" class="project-logo">🏗️</div>`:`<div class="project-logo" style="display:flex;align-items:center;justify-content:center">🏗️</div>`;
+    return `<div class="project-card"><div style="display:flex;justify-content:space-between;gap:12px">
+      <div style="display:flex;gap:12px;min-width:0">${logo}<div><h4>${esc(x.desc)}</h4>
+      <div class="muted">العميل: ${esc(clientName(x.clientId))} · النوع: ${esc(x.type||"-")} · الكود: ${esc(x.code||"-")}</div>
+      <div class="project-meta"><span>مدير: ${esc(x.manager||"-")}</span><span>مهندس: ${esc(x.engineer||"-")}</span><span>الموقع: ${esc(x.location||"-")}</span></div>
+      <div style="margin-top:8px">التكلفة المتوقعة: <b>${money(x.cost)}</b> · قيمة العقد: <b>${money(x.contractValue)}</b></div>
+      <div class="progress-wrap"><div style="display:flex;justify-content:space-between;font-size:12px"><span>نسبة الإنجاز</span><b>${pct}%</b></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+      </div></div><div>${statusBadge(x.status)}</div></div>
+      <div class="actions" style="margin-top:12px"><button class="btn info" onclick="viewProject(${x.id})">عرض</button><button class="btn warning" onclick="editProject(${x.id})">تعديل</button><button class="btn danger" onclick="deleteProject(${x.id})">حذف</button></div></div>`;
+  }).join("")||'<div class="empty">لا توجد مشاريع مسجلة</div>';
+  rows.filter(x=>x.logoFileId).forEach(x=>getFile(x.logoFileId).then(f=>{const e=document.getElementById("projectLogo_"+x.id);if(e&&f)e.innerHTML=`<img src="${f.data}" class="project-logo" alt="لوجو">`}));
+}
+async function saveProject(e){
+  e.preventDefault();
+  const existingId=Number(document.getElementById("projectId").value)||0;
+  const old=existingId?db.projects.find(x=>x.id===existingId):null;
+  const obj={id:existingId||id(),clientId:document.getElementById("pClient").value,code:document.getElementById("pCode").value.trim(),type:document.getElementById("pType").value,desc:document.getElementById("pDesc").value.trim(),cost:Number(document.getElementById("pCost").value)||0,contractValue:Number(document.getElementById("pContractValue").value)||0,startDate:document.getElementById("pStart").value,endDate:document.getElementById("pEnd").value,status:document.getElementById("pStatus").value,progress:Number(document.getElementById("pProgress").value)||0,manager:document.getElementById("pManager").value.trim(),engineer:document.getElementById("pEngineer").value.trim(),location:document.getElementById("pLocation").value.trim(),customLabel:document.getElementById("pCustomLabel").value.trim(),customValue:document.getElementById("pCustomValue").value.trim(),notes:document.getElementById("pNotes").value.trim(),createdAt:old?.createdAt||new Date().toISOString(),logoFileId:old?.logoFileId||null};
+  if(!obj.clientId||!obj.desc){toast("يرجى اختيار العميل وإدخال اسم المشروع","error");return}
+  const logoInput=document.getElementById("pLogo");
+  if(logoInput?.files?.[0]){const meta=await putFile(logoInput.files[0]);if(meta){meta.ownerType="projectLogo";meta.ownerId=obj.id;db.attachments.push(meta);obj.logoFileId=meta.id}}
+  const idx=db.projects.findIndex(x=>x.id===obj.id);if(idx>=0)db.projects[idx]=obj;else db.projects.push(obj);
+  await saveAttachments("project",obj.id,"pAttachments");saveDB();closeModal("projectModal");resetForm("projectForm");renderAll();toast(idx>=0?"تم تعديل المشروع":"تم حفظ المشروع");
+}
+function editProject(idv){
+  const x=db.projects.find(x=>x.id===idv);if(!x)return;
+  document.getElementById("projectId").value=x.id;document.getElementById("pClient").value=x.clientId||"";document.getElementById("pCode").value=x.code||"";document.getElementById("pType").value=x.type||"construction";document.getElementById("pDesc").value=x.desc||"";document.getElementById("pCost").value=x.cost||0;document.getElementById("pContractValue").value=x.contractValue||0;document.getElementById("pStart").value=x.startDate||"";document.getElementById("pEnd").value=x.endDate||"";document.getElementById("pStatus").value=x.status||"pending";document.getElementById("pProgress").value=x.progress||0;document.getElementById("pManager").value=x.manager||"";document.getElementById("pEngineer").value=x.engineer||"";document.getElementById("pLocation").value=x.location||"";document.getElementById("pCustomLabel").value=x.customLabel||"";document.getElementById("pCustomValue").value=x.customValue||"";document.getElementById("pNotes").value=x.notes||"";document.getElementById("projectModalTitle").textContent="تعديل المشروع";openModal("projectModal");renderAttachmentList("projectExistingAttachments","project",x.id);
+}
+function viewProject(idv){
+  const x=db.projects.find(x=>x.id===idv);if(!x)return;
+  const a=ownerAttachments("project",x.id).length;
+  alert(`المشروع: ${x.desc}\nالكود: ${x.code||"-"}\nالعميل: ${clientName(x.clientId)}\nالموقع: ${x.location||"-"}\nمدير المشروع: ${x.manager||"-"}\nالمهندس: ${x.engineer||"-"}\nنسبة الإنجاز: ${x.progress||0}%\nالمرفقات: ${a}\n${x.customLabel||"بيانات إضافية"}: ${x.customValue||"-"}\nالملاحظات: ${x.notes||"-"}`);
+}
+function deleteProject(idv){if(!requireAdmin())return;if(confirm("حذف المشروع؟")){db.projects=db.projects.filter(x=>x.id!==idv);saveDB();renderAll();toast("تم حذف المشروع")}}
+
+function renderMaintenance(){
+  const term=(document.getElementById("maintenanceSearch")?.value||"").toLowerCase();
+  const rows=db.maintenance.filter(x=>`${clientName(x.clientId)} ${x.desc} ${x.assignee}`.toLowerCase().includes(term));
+  document.getElementById("maintenanceList").innerHTML=rows.map(x=>`<div class="project-card"><div style="display:flex;justify-content:space-between;gap:10px"><div><h4>${esc(x.desc)}</h4><div class="muted">العميل: ${esc(clientName(x.clientId))} · التاريخ: ${esc(x.date)} · المسؤول: ${esc(x.assignee||"-")}</div></div>${priorityBadge(x.priority)}</div><div style="margin-top:8px">${x.status==="completed"?'<span class="badge b-success">مكتمل</span>':'<span class="badge b-warning">مفتوح</span>'}</div><div class="actions" style="margin-top:10px">${x.status!=="completed"?`<button class="btn success" onclick="completeMaintenance(${x.id})">إغلاق الطلب</button>`:""}<button class="btn danger" onclick="deleteMaintenance(${x.id})">حذف</button></div></div>`).join("")||'<div class="empty">لا توجد طلبات صيانة</div>';
+}
+async function saveMaintenance(e){
+  e.preventDefault();
+  const obj={id:id(),clientId:document.getElementById("mClient").value,priority:document.getElementById("mPriority").value,date:document.getElementById("mDate").value,assignee:document.getElementById("mAssignee").value.trim(),desc:document.getElementById("mDesc").value.trim(),status:"pending"};
+  if(!obj.clientId||!obj.desc){toast("يرجى إكمال البيانات المطلوبة","error");return}
+  db.maintenance.push(obj);await saveAttachments("maintenance",obj.id,"mAttachments");saveDB();closeModal("maintenanceModal");resetForm("maintenanceForm");renderAll();toast("تم تسجيل طلب الصيانة");
+}
+function completeMaintenance(idv){const x=db.maintenance.find(x=>x.id===idv);if(x){x.status="completed";saveDB();renderAll();toast("تم إغلاق طلب الصيانة")}}
+function deleteMaintenance(idv){if(confirm("حذف طلب الصيانة؟")){db.maintenance=db.maintenance.filter(x=>x.id!==idv);saveDB();renderAll();toast("تم حذف الطلب")}}
+function renderFinance(){
+  const rows=db.finance.slice().reverse();
+  document.getElementById("financeTable").innerHTML=rows.map(x=>`<tr><td>${esc(x.date)}</td><td>${x.type==="income"?'<span class="badge b-success">إيراد</span>':'<span class="badge b-danger">مصروف</span>'}</td><td>${esc(projectName(x.projectId))}</td><td>${esc(x.desc||"-")}</td><td class="${x.type==="income"?"money":"danger-text"}">${x.type==="income"?"+":"-"} ${money(x.amount)}</td><td><button class="btn danger" onclick="deleteFinance(${x.id})">حذف</button></td></tr>`).join("")||'<tr><td colspan="6" class="empty">لا توجد سجلات مالية</td></tr>';
+}
+async function saveFinance(e){
+  e.preventDefault();
+  const obj={id:id(),type:document.getElementById("fType").value,amount:Number(document.getElementById("fAmount").value)||0,date:document.getElementById("fDate").value,projectId:document.getElementById("fProject").value,desc:document.getElementById("fDesc").value.trim()};
+  if(obj.amount<=0){toast("يرجى إدخال مبلغ صحيح","error");return}
+  db.finance.push(obj);await saveAttachments("finance",obj.id,"fAttachments");saveDB();closeModal("financeModal");resetForm("financeForm");renderAll();toast("تم حفظ الحركة المالية");
+}
+function deleteFinance(idv){if(confirm("حذف السجل المالي؟")){db.finance=db.finance.filter(x=>x.id!==idv);saveDB();renderAll();toast("تم حذف السجل")}}
+function renderSuppliers(){
+  const term=(document.getElementById("supplierSearch")?.value||"").toLowerCase();
+  const rows=db.suppliers.filter(x=>`${x.name} ${x.type} ${x.phone} ${x.specialty}`.toLowerCase().includes(term));
+  document.getElementById("suppliersTable").innerHTML=rows.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.type)}</td><td>${esc(x.phone||"-")}</td><td>${esc(x.specialty||"-")}</td><td>${esc(x.notes||"-")}</td><td><button class="btn danger" onclick="deleteSupplier(${x.id})">حذف</button></td></tr>`).join("")||'<tr><td colspan="6" class="empty">لا توجد جهات</td></tr>';
+}
+async function saveSupplier(e){
+  e.preventDefault();const obj={id:id(),name:document.getElementById("sName").value.trim(),type:document.getElementById("sType").value,phone:document.getElementById("sPhone").value.trim(),specialty:document.getElementById("sSpecialty").value.trim(),notes:document.getElementById("sNotes").value.trim()};
+  if(!obj.name){toast("يرجى إدخال الاسم","error");return}db.suppliers.push(obj);await saveAttachments("supplier",obj.id,"sAttachments");saveDB();closeModal("supplierModal");resetForm("supplierForm");renderAll();toast("تم حفظ الجهة");
+}
+function deleteSupplier(idv){if(confirm("حذف الجهة؟")){db.suppliers=db.suppliers.filter(x=>x.id!==idv);saveDB();renderAll();toast("تم الحذف")}}
+function renderMaterials(){
+  document.getElementById("materialsTable").innerHTML=db.materials.slice().reverse().map(x=>`<tr><td>${esc(x.date)}</td><td><b>${esc(x.name)}</b></td><td>${esc(projectName(x.projectId))}</td><td>${esc(x.qty||"-")}</td><td>${esc(x.unit||"-")}</td><td>${money(x.cost)}</td><td>${esc(supplierName(x.supplierId))}</td><td><button class="btn danger" onclick="deleteMaterial(${x.id})">حذف</button></td></tr>`).join("")||'<tr><td colspan="8" class="empty">لا توجد مشتريات</td></tr>';
+}
+async function saveMaterial(e){
+  e.preventDefault();const obj={id:id(),name:document.getElementById("matName").value.trim(),date:document.getElementById("matDate").value,projectId:document.getElementById("matProject").value,supplierId:document.getElementById("matSupplier").value,qty:Number(document.getElementById("matQty").value)||0,unit:document.getElementById("matUnit").value.trim(),cost:Number(document.getElementById("matCost").value)||0};
+  if(!obj.name){toast("يرجى إدخال اسم المادة","error");return}db.materials.push(obj);await saveAttachments("material",obj.id,"matAttachments");saveDB();closeModal("materialModal");resetForm("materialForm");renderAll();toast("تم حفظ المادة");
+}
+function deleteMaterial(idv){if(confirm("حذف سجل المادة؟")){db.materials=db.materials.filter(x=>x.id!==idv);saveDB();renderAll();toast("تم الحذف")}}
+function renderTasks(){
+  const term=(document.getElementById("taskSearch")?.value||"").toLowerCase();
+  const rows=db.tasks.filter(x=>`${x.name} ${x.phase} ${projectName(x.projectId)}`.toLowerCase().includes(term));
+  document.getElementById("tasksList").innerHTML=rows.map(x=>`<div class="project-card"><div style="display:flex;justify-content:space-between"><div><h4>${esc(x.name)}</h4><div class="muted">المشروع: ${esc(projectName(x.projectId))} · المرحلة: ${esc(x.phase||"-")} · المسؤول: ${esc(x.assignee||"-")}</div><div class="muted" style="margin-top:4px">${esc(x.start||"-")} ← ${esc(x.end||"-")}</div></div>${x.status==="completed"?'<span class="badge b-success">مكتملة</span>':x.status==="active"?'<span class="badge b-info">جارية</span>':'<span class="badge b-warning">لم تبدأ</span>'}</div><div class="actions" style="margin-top:10px">${x.status!=="completed"?`<button class="btn success" onclick="completeTask(${x.id})">إتمام</button>`:""}<button class="btn danger" onclick="deleteTask(${x.id})">حذف</button></div></div>`).join("")||'<div class="empty">لا توجد مهام</div>';
+}
+async function saveTask(e){
+  e.preventDefault();const obj={id:id(),projectId:document.getElementById("tProject").value,name:document.getElementById("tName").value.trim(),phase:document.getElementById("tPhase").value.trim(),assignee:document.getElementById("tAssignee").value.trim(),start:document.getElementById("tStart").value,end:document.getElementById("tEnd").value,status:document.getElementById("tStatus").value};
+  if(!obj.projectId||!obj.name){toast("يرجى اختيار المشروع وإدخال اسم المهمة","error");return}db.tasks.push(obj);await saveAttachments("task",obj.id,"tAttachments");saveDB();closeModal("taskModal");resetForm("taskForm");renderAll();toast("تم حفظ المهمة");
+}
+function completeTask(idv){const x=db.tasks.find(x=>x.id===idv);if(x){x.status="completed";saveDB();renderAll();toast("تم إتمام المهمة")}}
+function deleteTask(idv){if(confirm("حذف المهمة؟")){db.tasks=db.tasks.filter(x=>x.id!==idv);saveDB();renderAll();toast("تم الحذف")}}
+function renderUsers(){
+  const box=document.getElementById("usersList");if(!box)return;
+  box.innerHTML=db.users.map(x=>`<div class="activity" style="display:flex;justify-content:space-between;align-items:center"><div><b>${esc(x.name)}</b> <span class="muted">(${esc(x.username)})</span> ${x.role==="admin"?'<span class="badge b-danger">مدير</span>':'<span class="badge b-info">مستخدم</span>'}</div>${x.id!==1?`<button class="btn danger" onclick="deleteUser(${x.id})">حذف</button>`:"<span class=\"muted\">الحساب الأساسي</span>"}</div>`).join("");
+}
+function saveUser(e){
+  e.preventDefault();if(!requireAdmin())return;
+  const obj={id:id(),name:document.getElementById("uName").value.trim(),username:document.getElementById("uUsername").value.trim(),password:document.getElementById("uPassword").value,role:document.getElementById("uRole").value};
+  if(!obj.name||!obj.username||!obj.password){toast("يرجى إكمال البيانات","error");return}
+  if(db.users.some(x=>x.username===obj.username)){toast("اسم المستخدم موجود مسبقًا","error");return}
+  db.users.push(obj);saveDB();closeModal("userModal");resetForm("userForm");renderAll();toast("تم إنشاء المستخدم");
+}
+function deleteUser(idv){if(!requireAdmin())return;if(confirm("حذف المستخدم؟")){db.users=db.users.filter(x=>x.id!==idv);saveDB();renderAll();toast("تم حذف المستخدم")}}
+
+
+async function saveSettings(e){
+  e.preventDefault();
+  db.settings={...db.settings,companyName:document.getElementById("setCompanyName").value.trim()||"نظام إدارة المشاريع الإنشائية",companySubtitle:document.getElementById("setCompanySubtitle").value.trim(),companyPhone:document.getElementById("setCompanyPhone").value.trim(),companyEmail:document.getElementById("setCompanyEmail").value.trim(),companyAddress:document.getElementById("setCompanyAddress").value.trim(),fontFamily:document.getElementById("setFontFamily").value,fontSize:Number(document.getElementById("setFontSize").value)||16,primaryColor:document.getElementById("setPrimaryColor").value||"#667eea"};
+  saveDB();applySettings();renderAll();toast("تم حفظ إعدادات النظام");
+}
+async function saveAccount(e){
+  e.preventDefault();if(!currentUser)return;
+  const name=document.getElementById("accName").value.trim(),username=document.getElementById("accUsername").value.trim(),password=document.getElementById("accPassword").value;
+  if(!name||!username){toast("الاسم واسم المستخدم مطلوبان","error");return}
+  if(db.users.some(x=>x.username===username&&x.id!==currentUser.id)){toast("اسم المستخدم مستخدم بالفعل","error");return}
+  const u=db.users.find(x=>x.id===currentUser.id);if(!u)return;
+  u.name=name;u.username=username;if(password)u.password=password;currentUser=u;saveDB();sessionStorage.setItem("construction_session",JSON.stringify({id:u.id}));login(u);toast("تم تحديث بيانات الحساب");
+}
+async function resetSettings(){
+  if(!requireAdmin()||!confirm("إعادة إعدادات الواجهة الافتراضية؟"))return;
+  db.settings=clone(defaultData.settings);saveDB();renderAll();toast("تمت إعادة الإعدادات الافتراضية");
+}
+async function handleSettingsLogo(){
+  const input=document.getElementById("settingsLogo");if(!input?.files?.[0])return;
+  const old=db.settings.logoFileId;const meta=await putFile(input.files[0]);if(!meta)return;
+  meta.ownerType="settingsLogo";meta.ownerId="system";db.attachments.push(meta);db.settings.logoFileId=meta.id;
+  if(old){await deleteStoredFile(old);db.attachments=db.attachments.filter(a=>a.id!==old)}
+  saveDB();input.value="";renderAll();toast("تم تحديث شعار الشركة");
+}
+async function removeSettingsLogo(){
+  if(!requireAdmin())return;const old=db.settings.logoFileId;if(old)await deleteStoredFile(old);
+  db.attachments=db.attachments.filter(a=>a.id!==old);db.settings.logoFileId=null;saveDB();renderAll();toast("تمت إزالة الشعار");
+}
+function csvCell(v){return '"'+String(v??"").replace(/"/g,'""')+'"'}
+function downloadText(filename,text,type="text/plain;charset=utf-8"){
+  const blob=new Blob(["\ufeff",text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function exportCSV(name,headers,rows){downloadText(name,[headers.map(csvCell).join(","),...rows.map(r=>r.map(csvCell).join(","))].join("\r\n"),"text/csv;charset=utf-8")}
+async function exportAll(){
+  const files=[];
+  for(const meta of db.attachments){const f=await getFile(meta.id);if(f)files.push(f)}
+  const payload={version:2,db,files};
+  downloadText("construction-backup-v2-"+today()+".json",JSON.stringify(payload),"application/json;charset=utf-8");toast("تم إنشاء النسخة الاحتياطية الكاملة");
+}
+async function restoreFile(file){
+  const reader=new FileReader();reader.onload=async()=>{
+    try{
+      const payload=JSON.parse(reader.result);const x=payload.db||payload;
+      const required=["users","clients","projects","maintenance","finance","suppliers","materials","tasks"];
+      if(!required.every(k=>Array.isArray(x[k])))throw new Error("invalid");
+      if(!confirm("سيتم استبدال البيانات الحالية بالنسخة المختارة. هل تريد المتابعة؟"))return;
+      db={...clone(defaultData),...x};db.settings={...clone(defaultData.settings),...(x.settings||{})};db.attachments=Array.isArray(x.attachments)?x.attachments:[];
+      if(Array.isArray(payload.files)){
+        for(const f of payload.files){const dbf=await openFileDB();await new Promise((resolve,reject)=>{const tx=dbf.transaction(FILE_STORE_NAME,"readwrite");tx.objectStore(FILE_STORE_NAME).put(f);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});dbf.close()}
+      }
+      saveDB();renderAll();toast("تمت استعادة النسخة بنجاح");
+    }catch(e){console.error(e);toast("ملف النسخة الاحتياطية غير صالح","error")}
+  };reader.readAsText(file);
+}
+
+
+// Cloud synchronization: Supabase Auth + per-user row + private Storage bucket.
+let cloudClient=null, cloudUser=null, cloudTimer=null, cloudBusy=false, cloudApplying=false;
+const CLOUD_CONFIG_KEY="construction_cloud_config_v1";
+function cloudConfig(){try{return JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY)||"{}")}catch(e){return {}}}
+function setCloudStatus(text,ok=false){const el=document.getElementById("cloudSyncStatus");if(el){el.textContent=text;el.style.background=ok?"#dcfce7":"#f1f5f9";el.style.color=ok?"#166534":"#475569"}}
+function initCloudClient(){const c=cloudConfig();if(!c.url||!c.key||!window.supabase?.createClient){cloudClient=null;return false}cloudClient=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return true}
+function scheduleCloudSync(){if(cloudApplying||!cloudUser||!cloudClient)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>syncCloud(false),1800)}
+async function saveLocalFileRecord(file){const dbf=await openFileDB();await new Promise((resolve,reject)=>{const tx=dbf.transaction(FILE_STORE_NAME,"readwrite");tx.objectStore(FILE_STORE_NAME).put(file);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});dbf.close()}
+async function syncCloud(showMessage=true){
+ if(!cloudClient||!cloudUser){if(showMessage)toast("اتصل بحساب المزامنة أولاً","error");return}
+ if(cloudBusy)return;cloudBusy=true;setCloudStatus("جاري المزامنة…");
+ try{
+  const {data:remote,error}=await cloudClient.from("app_records").select("data,updated_at").eq("user_id",cloudUser.id).maybeSingle();
+  if(error)throw error;
+  const localStamp=Number(localStorage.getItem("construction_cloud_updated")||0);
+  const remoteStamp=remote?.updated_at?new Date(remote.updated_at).getTime():0;
+  if(remote && remoteStamp>localStamp+1000 && !showMessage){
+    cloudApplying=true;const incoming=remote.data?.db;if(incoming){db={...clone(defaultData),...incoming};db.settings={...clone(defaultData.settings),...(incoming.settings||{})};db.attachments=Array.isArray(incoming.attachments)?incoming.attachments:[];localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+      for(const meta of db.attachments){if(!meta.cloudPath)continue;const {data,error:dlErr}=await cloudClient.storage.from("construction-files").download(meta.cloudPath);if(dlErr)continue;const dataUrl=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=rej;fr.readAsDataURL(data)});await saveLocalFileRecord({id:meta.id,name:meta.name,type:meta.type,size:meta.size,data:dataUrl});}
+      localStorage.setItem("construction_cloud_updated",String(remoteStamp));renderAll();cloudApplying=false;
+    }
+  }else{
+    // Upload local attachment binaries first; database row contains metadata and cloud paths.
+    for(const meta of db.attachments||[]){if(meta.cloudPath)continue;const f=await getFile(meta.id);if(!f?.data)continue;const blob=await (await fetch(f.data)).blob();const path=cloudUser.id+"/"+meta.id;const {error:upErr}=await cloudClient.storage.from("construction-files").upload(path,blob,{contentType:meta.type||"application/octet-stream",upsert:true});if(upErr)throw upErr;meta.cloudPath=path;}
+    const stamp=new Date().toISOString();const payload={db,deviceUpdatedAt:stamp,format:2};
+    const {error:upsertErr}=await cloudClient.from("app_records").upsert({user_id:cloudUser.id,data:payload,updated_at:stamp},{onConflict:"user_id"});if(upsertErr)throw upsertErr;
+    localStorage.setItem("construction_cloud_updated",String(new Date(stamp).getTime()));localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+  }
+  setCloudStatus("متصل ومتزامن ✓",true);if(showMessage)toast("اكتملت المزامنة");
+ }catch(e){console.error("Cloud sync:",e);setCloudStatus("تعذر الاتصال / المزامنة");if(showMessage)toast("فشلت المزامنة: "+(e.message||"تحقق من الإعدادات"),"error")}
+ finally{cloudBusy=false;cloudApplying=false}
+}
+async function connectCloud(){
+ const url=document.getElementById("cloudUrl").value.trim(),key=document.getElementById("cloudAnonKey").value.trim(),email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+ if(!url||!key||!email||!password){toast("أكمل رابط المشروع والمفتاح والبريد وكلمة المرور","error");return}
+ localStorage.setItem(CLOUD_CONFIG_KEY,JSON.stringify({url,key}));if(!initCloudClient()){toast("تعذر تحميل مكتبة الاتصال. تحقق من الإنترنت.","error");return}
+ setCloudStatus("جاري تسجيل الدخول…");
+ let result=await cloudClient.auth.signInWithPassword({email,password});
+ if(result.error && /invalid login credentials/i.test(result.error.message)){const signup=await cloudClient.auth.signUp({email,password});if(signup.error)throw signup.error;if(!signup.data.session){setCloudStatus("تحقق من بريدك الإلكتروني");toast("تم إنشاء الحساب. افتح رسالة التأكيد ثم أعد الاتصال.");return}result=signup}
+ if(result.error)throw result.error;cloudUser=result.data.user;setCloudStatus("تم الاتصال؛ جاري أول مزامنة…",true);await syncCloud(false);cloudClient.channel("construction-sync-"+cloudUser.id).on("postgres_changes",{event:"UPDATE",schema:"public",table:"app_records",filter:"user_id=eq."+cloudUser.id},()=>syncCloud(false)).subscribe();toast("تم الاتصال بحساب المزامنة")
+}
+async function restoreCloudSession(){if(!initCloudClient())return;try{const {data}=await cloudClient.auth.getSession();if(data.session){cloudUser=data.session.user;setCloudStatus("تم استعادة الاتصال",true);await syncCloud(false);cloudClient.channel("construction-sync-"+cloudUser.id).on("postgres_changes",{event:"UPDATE",schema:"public",table:"app_records",filter:"user_id=eq."+cloudUser.id},()=>syncCloud(false)).subscribe();}}catch(e){console.warn(e)}}
+async function disconnectCloud(){if(cloudClient)await cloudClient.auth.signOut();cloudUser=null;cloudClient=null;localStorage.removeItem(CLOUD_CONFIG_KEY);setCloudStatus("تم فصل حساب المزامنة");toast("تم فصل حساب المزامنة")}
+function registerPWA(){if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(e=>console.warn("SW",e));}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("loginForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const u=document.getElementById("loginUsername").value.trim(),p=document.getElementById("loginPassword").value;
+    const user=db.users.find(x=>x.username===u&&x.password===p);
+    if(!user){toast("اسم المستخدم أو كلمة المرور غير صحيحة","error");return}login(user);
+  });
+  document.querySelectorAll(".nav-item[data-page]").forEach(x=>x.addEventListener("click",()=>showPage(x.dataset.page)));
+  document.getElementById("logoutBtn").addEventListener("click",logout);
+  document.getElementById("menuBtn").addEventListener("click",()=>document.getElementById("sidebar").classList.toggle("open"));
+  document.querySelectorAll("[data-open]").forEach(x=>x.addEventListener("click",()=>{
+    if(x.dataset.open==="projectModal"){resetForm("projectForm");document.getElementById("projectId").value="";document.getElementById("projectModalTitle").textContent="إضافة مشروع";document.getElementById("pProgress").value=0;document.getElementById("projectExistingAttachments").innerHTML=""}
+    openModal(x.dataset.open);
+  }));
+  document.querySelectorAll("[data-close]").forEach(x=>x.addEventListener("click",()=>x.closest(".modal").classList.remove("active")));
+  document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("active")}));
+  document.getElementById("clientForm").addEventListener("submit",saveClient);
+  document.getElementById("projectForm").addEventListener("submit",saveProject);
+  document.getElementById("maintenanceForm").addEventListener("submit",saveMaintenance);
+  document.getElementById("financeForm").addEventListener("submit",saveFinance);
+  document.getElementById("supplierForm").addEventListener("submit",saveSupplier);
+  document.getElementById("materialForm").addEventListener("submit",saveMaterial);
+  document.getElementById("taskForm").addEventListener("submit",saveTask);
+  document.getElementById("userForm").addEventListener("submit",saveUser);
+  document.getElementById("settingsForm").addEventListener("submit",saveSettings);
+  document.getElementById("accountForm").addEventListener("submit",saveAccount);
+  document.getElementById("settingsLogo").addEventListener("change",handleSettingsLogo);
+  document.getElementById("removeSettingsLogo").addEventListener("click",removeSettingsLogo);
+  document.getElementById("resetSettingsBtn").addEventListener("click",resetSettings);
+  ["clientSearch","projectSearch","maintenanceSearch","supplierSearch","taskSearch"].forEach(x=>document.getElementById(x).addEventListener("input",renderAll));
+  document.getElementById("exportClients").onclick=()=>exportCSV("clients.csv",["الكود","الاسم","الهاتف","البريد","العنوان","الملاحظات"],db.clients.map(x=>[x.code,x.name,x.phone,x.email,x.address,x.notes]));
+  document.getElementById("exportProjects").onclick=()=>exportCSV("projects.csv",["العميل","المشروع","النوع","التكلفة","البداية","النهاية","الحالة"],db.projects.map(x=>[clientName(x.clientId),x.desc,x.type,x.cost,x.startDate,x.endDate,x.status]));
+  document.getElementById("exportFinance").onclick=()=>exportCSV("finance.csv",["التاريخ","النوع","المشروع","الوصف","المبلغ"],db.finance.map(x=>[x.date,x.type,projectName(x.projectId),x.desc,x.amount]));
+  document.getElementById("exportAll").onclick=exportAll;document.getElementById("backupBtn").onclick=exportAll;
+  document.getElementById("restoreInput").addEventListener("change",e=>{if(e.target.files[0])restoreFile(e.target.files[0]);e.target.value=""});
+  const session=sessionStorage.getItem("construction_session");
+  if(session){try{const s=JSON.parse(session),u=db.users.find(x=>x.id===s.id);if(u)login(u)}catch(e){}}
+  document.getElementById("cloudConnectBtn").addEventListener("click",()=>connectCloud().catch(e=>{console.error(e);toast(e.message||"تعذر الاتصال بالسحابة","error")}));
+  document.getElementById("cloudSyncNowBtn").addEventListener("click",()=>syncCloud(true));
+  document.getElementById("cloudDisconnectBtn").addEventListener("click",disconnectCloud);
+  const cc=cloudConfig();if(cc.url)document.getElementById("cloudUrl").value=cc.url;if(cc.key)document.getElementById("cloudAnonKey").value=cc.key;
+  registerPWA();restoreCloudSession();
+  renderAll();
+});
+</script>
+</body>
+</html>
